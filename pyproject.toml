@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "bayesian-engine"
+version = "0.1.0"
+description = "Bayesian-weighted consensus engine with reliability tracking"
+authors = ["Consensus Nexus Team"]
+readme = "README.md"
+packages = [{ include = "bayesian_engine", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+ruff = "^0.9.0"
+mypy = "^1.11.0"
+
+[tool.poetry.scripts]
+bayesian-engine = "bayesian_engine.cli:main"
+
+[tool.ruff]
+line-length = 100
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+
+[build-system]
+requires = ["poetry-core>=1.8.0"]
+build-backend = "poetry.core.masonry.api"
