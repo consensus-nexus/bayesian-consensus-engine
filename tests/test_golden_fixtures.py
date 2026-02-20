@@ -15,7 +15,6 @@ import pytest
 
 from bayesian_engine.core import (
     SCHEMA_VERSION,
-    ValidationError,
     compute_consensus,
     validate_input_payload,
 )
