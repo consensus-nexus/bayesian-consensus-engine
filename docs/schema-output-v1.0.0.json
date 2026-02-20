@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/consensus-nexus/bayesian-consensus-engine/docs/schema-output-v1.0.0.json",
+  "title": "Bayesian Engine Output v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "consensus", "confidence", "sourceWeights", "normalization", "diagnostics"],
+  "properties": {
+    "schemaVersion": {"type": "string", "const": "1.0.0"},
+    "consensus": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "sourceWeights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceId", "weight"],
+        "properties": {
+          "sourceId": {"type": "string"},
+          "weight": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

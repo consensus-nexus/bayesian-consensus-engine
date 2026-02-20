@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/consensus-nexus/bayesian-consensus-engine/docs/schema-input-v1.0.0.json",
+  "title": "Bayesian Engine Input v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "marketId", "signals"],
+  "properties": {
+    "schemaVersion": {"type": "string", "const": "1.0.0"},
+    "marketId": {"type": "string", "minLength": 1},
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceId", "probability"],
+        "properties": {
+          "sourceId": {"type": "string", "minLength": 1},
+          "probability": {"type": "number", "minimum": 0, "maximum": 1},
+          "weightHint": {"type": "number", "minimum": 0}
+        }
+      }
+    }
+  }
+}
