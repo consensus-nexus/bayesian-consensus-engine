@@ -4,7 +4,6 @@ import pytest
 from bayesian_engine.tiebreak import (
     AgentSignal,
     DeterministicTieBreaker,
-    TieBreakDiagnostics,
 )
 
 
