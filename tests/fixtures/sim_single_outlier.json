@@ -1,0 +1,16 @@
+{
+  "description": "Simulation dataset 3: Single outlier — one agent strongly disagrees with the majority.",
+  "schemaVersion": "1.0.0",
+  "input": {
+    "schemaVersion": "1.0.0",
+    "marketId": "sim-single-outlier",
+    "signals": [
+      {"sourceId": "consensus-1", "probability": 0.60},
+      {"sourceId": "consensus-2", "probability": 0.62},
+      {"sourceId": "consensus-3", "probability": 0.58},
+      {"sourceId": "consensus-4", "probability": 0.61},
+      {"sourceId": "outlier-1", "probability": 0.05}
+    ]
+  },
+  "notes": "4 agents cluster at ~0.60, 1 extreme outlier at 0.05. Tests how consensus handles noise/outliers."
+}

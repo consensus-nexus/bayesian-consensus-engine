@@ -1,0 +1,16 @@
+{
+  "description": "Simulation dataset 2: Polarized split — two groups disagree strongly.",
+  "schemaVersion": "1.0.0",
+  "input": {
+    "schemaVersion": "1.0.0",
+    "marketId": "sim-polarized-split",
+    "signals": [
+      {"sourceId": "bull-1", "probability": 0.85},
+      {"sourceId": "bull-2", "probability": 0.88},
+      {"sourceId": "bull-3", "probability": 0.82},
+      {"sourceId": "bear-1", "probability": 0.15},
+      {"sourceId": "bear-2", "probability": 0.12}
+    ]
+  },
+  "notes": "3 bullish vs 2 bearish agents. Tests tie-break resolution and diagnostics under polarization."
+}
