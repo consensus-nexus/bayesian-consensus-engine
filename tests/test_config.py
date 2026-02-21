@@ -1,7 +1,5 @@
 """Tests for config module constants."""
 
-import pytest
-
 from bayesian_engine.config import (
     DEFAULT_RELIABILITY,
     DEFAULT_CONFIDENCE,
