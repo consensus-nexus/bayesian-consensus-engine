@@ -248,7 +248,6 @@ class TestDecayEdgeCases:
         result = apply_reliability_decay(0.8, 0.5, half_life_days=1)
         # After 0.5 days with 1-day half-life, factor = 2^(-0.5) ≈ 0.707
         # Decayed = 0.1 + (0.8 - 0.1) * 0.707 ≈ 0.595
-        import math
         expected_factor = 2 ** (-0.5)
         expected = 0.1 + 0.7 * expected_factor
         assert result == pytest.approx(expected)

@@ -19,7 +19,7 @@ This means:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from typing import Union
 
 from bayesian_engine.config import (
@@ -54,7 +54,6 @@ def compute_decay_factor(
 
     # Exponential decay: factor = 2^(-t/half_life)
     # Using the formula: 2^(-n) where n = elapsed / half_life
-    import math
     exponent = -elapsed_days / half_life_days
     return 2.0 ** exponent
 
