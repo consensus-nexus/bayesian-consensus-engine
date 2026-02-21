@@ -1,0 +1,16 @@
+{
+  "description": "Simulation dataset 1: Uniform agreement — all agents predict similar probabilities.",
+  "schemaVersion": "1.0.0",
+  "input": {
+    "schemaVersion": "1.0.0",
+    "marketId": "sim-uniform-agreement",
+    "signals": [
+      {"sourceId": "src-1", "probability": 0.80},
+      {"sourceId": "src-2", "probability": 0.78},
+      {"sourceId": "src-3", "probability": 0.82},
+      {"sourceId": "src-4", "probability": 0.79},
+      {"sourceId": "src-5", "probability": 0.81}
+    ]
+  },
+  "notes": "All signals cluster around 0.80. Consensus should converge near 0.80 with high confidence."
+}
