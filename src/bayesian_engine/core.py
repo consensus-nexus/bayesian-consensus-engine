@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = "1.0.0"
-
-# TODO: Move to centralized config module (issue #2)
-DEFAULT_RELIABILITY = 0.50
-DEFAULT_CONFIDENCE = 0.25
+from bayesian_engine.config import (
+    DEFAULT_RELIABILITY,
+    DEFAULT_CONFIDENCE,
+    SCHEMA_VERSION,
+)
 
 
 class ValidationError(ValueError):
