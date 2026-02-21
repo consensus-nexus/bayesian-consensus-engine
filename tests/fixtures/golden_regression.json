@@ -1,5 +1,5 @@
 {
-  "description": "Golden deterministic regression fixture. Given identical input and DB state, output must match exactly.",
+  "description": "Golden deterministic regression fixture v1.0.0. Given identical input (no reliability DB), output must match exactly.",
   "schemaVersion": "1.0.0",
   "input": {
     "schemaVersion": "1.0.0",
@@ -12,13 +12,38 @@
   },
   "expectedOutput": {
     "schemaVersion": "1.0.0",
-    "consensus": null,
-    "confidence": null,
-    "sourceWeights": [],
-    "normalization": {},
+    "consensus": 0.6966666666666667,
+    "confidence": 0.25,
+    "sourceWeights": [
+      {
+        "sourceId": "agent-alpha",
+        "weight": 0.5,
+        "normalizedWeight": 0.3333333333333333
+      },
+      {
+        "sourceId": "agent-beta",
+        "weight": 0.5,
+        "normalizedWeight": 0.3333333333333333
+      },
+      {
+        "sourceId": "agent-gamma",
+        "weight": 0.5,
+        "normalizedWeight": 0.3333333333333333
+      }
+    ],
+    "normalization": {
+      "totalWeight": 1.5,
+      "sourceCount": 3
+    },
     "diagnostics": {
-      "status": "TODO",
-      "sources": 3
+      "status": "computed",
+      "sources": 3,
+      "uniqueSources": 3,
+      "coldStartSources": [
+        "agent-alpha",
+        "agent-beta",
+        "agent-gamma"
+      ]
     }
   }
 }
