@@ -4,6 +4,8 @@ Provides persistent storage for source reliability scores and confidence
 values. Supports Bayesian-style post-outcome updates with a capped update
 step to prevent wild swings from a single outcome.
 
+Implements PRD §7.B exponential time decay when fetching reliability.
+
 Cold-start defaults (PRD §reliability):
     reliability = 0.50
     confidence  = 0.50
@@ -19,12 +21,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional, Union
 
-# Cold-start defaults (PRD)
-DEFAULT_RELIABILITY: float = 0.50
-DEFAULT_CONFIDENCE: float = 0.50
-
-# Maximum change in reliability per single outcome (PRD)
-MAX_UPDATE_STEP: float = 0.10
+from bayesian_engine.config import (
+    DEFAULT_RELIABILITY,
+    DEFAULT_CONFIDENCE,
+    MAX_UPDATE_STEP,
+    DECAY_HALF_LIFE_DAYS,
+    DECAY_MINIMUM,
+)
+from bayesian_engine.decay import apply_reliability_decay, days_since_update
 
 # Learning rate applied before capping
 _BASE_LEARNING_RATE: float = 0.15
@@ -82,11 +86,20 @@ class SQLiteReliabilityStore:
         self,
         source_id: str,
         market_id: str,
+        apply_decay: bool = False,
     ) -> ReliabilityRecord:
         """Return the reliability record for *source_id* in *market_id*.
 
         If no record exists (cold-start), returns a record populated with
         the PRD default values (reliability=0.5, confidence=0.5).
+
+        Args:
+            source_id: Unique identifier for the signal source
+            market_id: Market or question identifier
+            apply_decay: If True, apply exponential time decay to reliability
+
+        Returns:
+            ReliabilityRecord with current (possibly decayed) reliability
         """
         row = self._conn.execute(
             "SELECT source_id, market_id, reliability, confidence, updated_at "
@@ -95,12 +108,26 @@ class SQLiteReliabilityStore:
         ).fetchone()
 
         if row is not None:
+            reliability = row["reliability"]
+            updated_at = row["updated_at"]
+
+            # Apply decay if requested and we have a timestamp
+            if apply_decay and updated_at:
+                elapsed_days = days_since_update(updated_at)
+                if elapsed_days > 0:
+                    reliability = apply_reliability_decay(
+                        reliability,
+                        elapsed_days,
+                        DECAY_HALF_LIFE_DAYS,
+                        DECAY_MINIMUM,
+                    )
+
             return ReliabilityRecord(
                 source_id=row["source_id"],
                 market_id=row["market_id"],
-                reliability=row["reliability"],
+                reliability=reliability,
                 confidence=row["confidence"],
-                updated_at=row["updated_at"],
+                updated_at=updated_at,
             )
 
         # Cold-start: return defaults without persisting
