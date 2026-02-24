@@ -6,8 +6,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-import pytest
-
 
 def _run_cli(args: list[str], input_data: dict | None = None) -> subprocess.CompletedProcess:
     """Helper to run CLI with optional stdin input."""
