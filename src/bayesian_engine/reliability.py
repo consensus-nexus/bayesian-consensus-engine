@@ -139,26 +139,24 @@ class SQLiteReliabilityStore:
             updated_at="",
         )
 
-    def update_reliability(
+    def compute_update(
         self,
         source_id: str,
         market_id: str,
         outcome_correct: bool,
     ) -> ReliabilityRecord:
-        """Apply a Bayesian-style reliability update after an outcome.
+        """Compute what reliability WOULD be after an outcome, without writing.
 
-        The update direction depends on *outcome_correct*:
-        - ``True``  → reliability moves **up** (source was right)
-        - ``False`` → reliability moves **down** (source was wrong)
+        This is the dry-run version of update_reliability().
+        Useful for testing and simulation without persisting changes.
 
-        The raw delta is ``_BASE_LEARNING_RATE * direction`` and is then
-        clamped so the absolute change never exceeds ``MAX_UPDATE_STEP``.
-        The final value is clamped to [0, 1].
+        Args:
+            source_id: Unique identifier for the signal source
+            market_id: Market or question identifier
+            outcome_correct: Whether the source's prediction was correct
 
-        Confidence grows toward 1.0 with every update (the store has seen
-        more evidence about this source).
-
-        Returns the updated :class:`ReliabilityRecord`.
+        Returns:
+            ReliabilityRecord with the computed (not persisted) new values
         """
         current = self.get_reliability(source_id, market_id)
 
@@ -176,6 +174,50 @@ class SQLiteReliabilityStore:
 
         now = datetime.now(timezone.utc).isoformat()
 
+        return ReliabilityRecord(
+            source_id=source_id,
+            market_id=market_id,
+            reliability=new_reliability,
+            confidence=new_confidence,
+            updated_at=now,
+        )
+
+    def update_reliability(
+        self,
+        source_id: str,
+        market_id: str,
+        outcome_correct: bool,
+        dry_run: bool = False,
+    ) -> ReliabilityRecord:
+        """Apply a Bayesian-style reliability update after an outcome.
+
+        The update direction depends on *outcome_correct*:
+        - ``True``  → reliability moves **up** (source was right)
+        - ``False`` → reliability moves **down** (source was wrong)
+
+        The raw delta is ``_BASE_LEARNING_RATE * direction`` and is then
+        clamped so the absolute change never exceeds ``MAX_UPDATE_STEP``.
+        The final value is clamped to [0, 1].
+
+        Confidence grows toward 1.0 with every update (the store has seen
+        more evidence about this source).
+
+        Args:
+            source_id: Unique identifier for the signal source
+            market_id: Market or question identifier
+            outcome_correct: Whether the source's prediction was correct
+            dry_run: If True, compute the update without persisting (zero DB writes)
+
+        Returns the updated :class:`ReliabilityRecord`.
+        """
+        # Compute the new values
+        result = self.compute_update(source_id, market_id, outcome_correct)
+
+        # If dry-run, return without writing
+        if dry_run:
+            return result
+
+        # Persist the update
         self._conn.execute(
             """
             INSERT INTO sources (source_id, market_id, reliability, confidence, updated_at)
@@ -185,16 +227,10 @@ class SQLiteReliabilityStore:
                           confidence  = excluded.confidence,
                           updated_at  = excluded.updated_at
             """,
-            (source_id, market_id, new_reliability, new_confidence, now),
+            (source_id, market_id, result.reliability, result.confidence, result.updated_at),
         )
 
-        return ReliabilityRecord(
-            source_id=source_id,
-            market_id=market_id,
-            reliability=new_reliability,
-            confidence=new_confidence,
-            updated_at=now,
-        )
+        return result
 
     def list_sources(
         self,
