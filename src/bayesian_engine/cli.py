@@ -22,6 +22,24 @@ def _load_input(input_path: str | None) -> dict[str, Any]:
     return json.load(sys.stdin)
 
 
+def _run_dashboard(port: int, db_path: str) -> None:
+    """Run the dashboard server."""
+    try:
+        from bayesian_engine.dashboard import DashboardServer
+    except ImportError as e:
+        print(f"Dashboard requires extra dependencies: pip install bayesian-consensus-engine[dashboard]", file=sys.stderr)
+        raise SystemExit(1) from e
+    
+    store = SQLiteReliabilityStore(db_path)
+    server = DashboardServer(store, port=port)
+    try:
+        server.start(blocking=True)
+    except KeyboardInterrupt:
+        print("\nDashboard stopped.")
+    finally:
+        store.close()
+
+
 def _cmd_consensus(args: argparse.Namespace) -> None:
     """Compute consensus from signals."""
     try:
@@ -110,6 +128,11 @@ def _cmd_list_sources(args: argparse.Namespace) -> None:
         raise SystemExit(1) from exc
 
 
+def _cmd_dashboard(args: argparse.Namespace) -> None:
+    """Launch the web dashboard."""
+    _run_dashboard(args.port, args.db)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="bayesian-engine",
@@ -118,7 +141,8 @@ def main() -> None:
     parser.add_argument(
         "--db",
         type=str,
-        help="Path to SQLite database file (default: in-memory)",
+        default="reliability.db",
+        help="Path to SQLite database file (default: reliability.db)",
     )
     parser.add_argument(
         "--dry-run",
@@ -150,28 +174,28 @@ def main() -> None:
     list_parser.add_argument("--market-id", help="Filter by market ID")
     list_parser.set_defaults(func=_cmd_list_sources)
     
+    # dashboard command
+    dashboard_parser = subparsers.add_parser("dashboard", help="Launch web dashboard")
+    dashboard_parser.add_argument("--port", type=int, default=8080, help="Dashboard port (default: 8080)")
+    dashboard_parser.set_defaults(func=_cmd_dashboard)
+    
     args = parser.parse_args()
     
     # Default to consensus for backward compatibility
     if args.command is None:
         # Legacy mode: treat as consensus command with top-level --input
-        _cmd_consensus_legacy(args)
+        try:
+            payload = _load_input(args.input)
+            validate_input_payload(payload)
+            result = compute_consensus(payload["signals"])
+            if args.dry_run:
+                result["diagnostics"]["dryRun"] = True
+            print(json.dumps(result, indent=2))
+        except (json.JSONDecodeError, ValidationError) as exc:
+            print(f"Validation error: {exc}", file=sys.stderr)
+            raise SystemExit(1) from exc
     else:
         args.func(args)
-
-
-def _cmd_consensus_legacy(args: argparse.Namespace) -> None:
-    """Legacy consensus command for backward compatibility."""
-    try:
-        payload = _load_input(args.input)
-        validate_input_payload(payload)
-        result = compute_consensus(payload["signals"])
-        if args.dry_run:
-            result["diagnostics"]["dryRun"] = True
-        print(json.dumps(result, indent=2))
-    except (json.JSONDecodeError, ValidationError) as exc:
-        print(f"Validation error: {exc}", file=sys.stderr)
-        raise SystemExit(1) from exc
 
 
 if __name__ == "__main__":
