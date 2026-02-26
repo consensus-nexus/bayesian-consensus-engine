@@ -28,14 +28,14 @@ def main():
     result = compute_consensus(payload["signals"])
 
     # Display results
-    print(f"\n=== Consensus Result ===")
+    print("\n=== Consensus Result ===")
     print(f"Consensus probability: {result['consensus']:.2%}")
     print(f"Confidence: {result['confidence']:.2%}")
-    print(f"\nSource weights:")
+    print("\nSource weights:")
     for sw in result["sourceWeights"]:
         print(f"  {sw['sourceId']}: {sw['normalizedWeight']:.2%}")
 
-    print(f"\nDiagnostics:")
+    print("\nDiagnostics:")
     print(f"  Status: {result['diagnostics']['status']}")
     print(f"  Cold-start sources: {result['diagnostics']['coldStartSources']}")
 
