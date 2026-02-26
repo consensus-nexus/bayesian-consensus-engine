@@ -27,7 +27,7 @@ from enum import Enum
 from typing import Optional, Protocol, runtime_checkable
 
 from bayesian_engine.config import DEFAULT_RELIABILITY, DEFAULT_CONFIDENCE
-from bayesian_engine.reliability import SQLiteReliabilityStore, ReliabilityRecord
+from bayesian_engine.reliability import SQLiteReliabilityStore
 
 
 class ReliabilityNamespace(str, Enum):
