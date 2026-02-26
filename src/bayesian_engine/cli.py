@@ -27,7 +27,7 @@ def _run_dashboard(port: int, db_path: str) -> None:
     try:
         from bayesian_engine.dashboard import DashboardServer
     except ImportError as e:
-        print(f"Dashboard requires extra dependencies: pip install bayesian-consensus-engine[dashboard]", file=sys.stderr)
+        print("Dashboard requires extra dependencies: pip install bayesian-consensus-engine[dashboard]", file=sys.stderr)
         raise SystemExit(1) from e
     
     store = SQLiteReliabilityStore(db_path)
