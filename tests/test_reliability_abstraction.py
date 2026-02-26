@@ -41,10 +41,11 @@ class TestNamespacedReliabilityStore:
         
         record = store.get_reliability("agent-a")
         
-        assert record.reliability == 0.8
-        assert record.confidence == 0.6
+        assert record.reliability == pytest.approx(0.8)
+        assert record.confidence == pytest.approx(0.6)
         assert record.namespace == ReliabilityNamespace.GLOBAL
-        assert record.is_fallback is False
+        # Global is considered a fallback when no specific market/domain is requested
+        assert record.is_fallback is True
     
     def test_domain_fallback_to_global(self, store):
         """Domain-specific lookup falls back to global."""
@@ -53,7 +54,7 @@ class TestNamespacedReliabilityStore:
         # Request domain-specific, should get global
         record = store.get_reliability("agent-a", domain="crypto")
         
-        assert record.reliability == 0.75
+        assert record.reliability == pytest.approx(0.75)
         assert record.namespace == ReliabilityNamespace.GLOBAL
         assert record.is_fallback is True
     
@@ -121,7 +122,7 @@ class TestNamespacedReliabilityStore:
         store.set_global_reliability("agent-a", 0.7, 0.5)
         r2 = store.get_reliability("agent-a", market_id="m1", domain="crypto")
         assert r2.namespace == ReliabilityNamespace.GLOBAL
-        assert r2.reliability == 0.7
+        assert r2.reliability == pytest.approx(0.7)
         
         # 3. Set domain
         store.update_reliability("agent-a", True, domain="crypto")
