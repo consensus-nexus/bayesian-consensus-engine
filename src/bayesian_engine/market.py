@@ -31,12 +31,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Dict, List, Optional, Set, Any, Iterator
+from typing import Dict, List, Optional, Any
 import fnmatch
-import re
 
 from bayesian_engine.core import compute_consensus
-from bayesian_engine.reliability import SQLiteReliabilityStore, ReliabilityRecord
+from bayesian_engine.reliability import SQLiteReliabilityStore
 
 
 @dataclass(frozen=True)
