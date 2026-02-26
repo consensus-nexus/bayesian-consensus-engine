@@ -140,7 +140,7 @@ class TestMarketStore:
     def test_list_markets_by_status(self):
         """List markets filtered by status."""
         store = MarketStore()
-        _m1 = store.create_market(MarketId("open-1"))
+        store.create_market(MarketId("open-1"))
         m2 = store.create_market(MarketId("resolved-1"))
         m2.resolve(True)
         
