@@ -100,7 +100,7 @@ class DashboardData:
 class DashboardHandler(BaseHTTPRequestHandler):
     """HTTP request handler for dashboard."""
     
-    data_provider: DashboardData = None
+    data_provider: Optional[DashboardData] = None
     
     def log_message(self, format, *args):
         """Suppress default logging."""
