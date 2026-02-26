@@ -32,7 +32,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Optional, Protocol, Type, runtime_checkable
+from typing import Any, Dict, Optional
 
 from bayesian_engine.config import (
     MAX_UPDATE_STEP,
