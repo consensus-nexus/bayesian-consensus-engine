@@ -4,17 +4,13 @@ import pytest
 
 from bayesian_engine.plugins import (
     UpdateStrategy,
-    DecayStrategy,
     UpdateContext,
     DecayContext,
     UpdateResult,
-    DecayResult,
     StrategyRegistry,
-    get_registry,
     get_update_strategy,
     get_decay_strategy,
     register_update_strategy,
-    register_decay_strategy,
     DefaultUpdateStrategy,
     ConservativeUpdateStrategy,
     AggressiveUpdateStrategy,
@@ -22,7 +18,6 @@ from bayesian_engine.plugins import (
     LinearDecayStrategy,
     NoDecayStrategy,
 )
-from bayesian_engine.config import DEFAULT_RELIABILITY, DEFAULT_CONFIDENCE
 
 
 class TestUpdateStrategies:

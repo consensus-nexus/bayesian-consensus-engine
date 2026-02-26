@@ -35,8 +35,6 @@ from dataclasses import dataclass
 from typing import Any, Callable, Dict, Optional, Protocol, Type, runtime_checkable
 
 from bayesian_engine.config import (
-    DEFAULT_RELIABILITY,
-    DEFAULT_CONFIDENCE,
     MAX_UPDATE_STEP,
     DECAY_HALF_LIFE_DAYS,
     DECAY_MINIMUM,
