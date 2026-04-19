@@ -30,8 +30,7 @@ Usage:
 
 from __future__ import annotations
 
-from typing import Protocol, runtime_checkable, Type, Optional
-from dataclasses import dataclass
+from typing import Protocol, runtime_checkable, Type
 
 from bayesian_engine.config import (
     DECAY_HALF_LIFE_DAYS,
