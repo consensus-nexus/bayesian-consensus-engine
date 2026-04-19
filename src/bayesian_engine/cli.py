@@ -9,6 +9,7 @@ from typing import Any
 
 from bayesian_engine.core import ValidationError, compute_consensus, validate_input_payload
 from bayesian_engine.reliability import SQLiteReliabilityStore
+from bayesian_engine.dashboard import start_dashboard
 
 
 def _load_input(input_path: str | None) -> dict[str, Any]:
@@ -110,6 +111,14 @@ def _cmd_list_sources(args: argparse.Namespace) -> None:
         raise SystemExit(1) from exc
 
 
+def _cmd_dashboard(args: argparse.Namespace) -> None:
+    """Launch the reliability dashboard HTTP server."""
+    if not args.db:
+        print("Error: --db is required for dashboard", file=sys.stderr)
+        raise SystemExit(1)
+    start_dashboard(db_path=args.db, port=args.port, open_browser=args.open)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="bayesian-engine",
@@ -149,6 +158,12 @@ def main() -> None:
     list_parser = subparsers.add_parser("list-sources", help="List sources with reliability data")
     list_parser.add_argument("--market-id", help="Filter by market ID")
     list_parser.set_defaults(func=_cmd_list_sources)
+
+    # dashboard command
+    dashboard_parser = subparsers.add_parser("dashboard", help="Launch reliability dashboard")
+    dashboard_parser.add_argument("--port", type=int, default=8080, help="Port to listen on (default: 8080)")
+    dashboard_parser.add_argument("--open", action="store_true", help="Open browser automatically")
+    dashboard_parser.set_defaults(func=_cmd_dashboard)
     
     args = parser.parse_args()
     
